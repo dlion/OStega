@@ -1,67 +1,68 @@
 #include <highgui.h>
 #include <cv.h>
 #include <string.h>
+#include "OStega.c"
+#include <stdlib.h>
 
 int main(int argc, char **argv)
 {
     IplImage *in;
-    int i,j,k=0,lett;
-    int height,width,step;
-    uchar *data;
-    char *msg;
-
-    //Controllo argc
-    if(argc != 4)
+    char *img,*message,*simbol,limit;
+    int mode,step,result;
+    
+    if(argc < 5)
     {
-        printf("%s <image_in> <image_out> <message>\n",argv[0]);
+        printf("Usage: %s <mode> <image_in> <step> <simbol> <<message>>\n",argv[0]);
         return -1;
     }
 
-    //Carico l'immagine
-    in = cvLoadImage(argv[1]);
+    mode = atoi(argv[1]);
 
-    //Accetto solo immagini RGB
-    if(in->nChannels != 3)
+    if(mode != 1 && mode != 2 )
     {
-        puts("Only RGB images");
+        printf("You can specify what do you do.\n",argv[0]);
         return -1;
     }
 
-    //Variabili utili
-    msg = argv[3];
-    height = in->height;
-    width = in->width;
-    step = in->widthStep;
-    data = (uchar*)in->imageData;
+    step = atoi(argv[3]);
 
-    //Scansiono l'intera immagine
-    for(i=0; i < height; i+=10)
+    simbol = argv[4];
+    limit = simbol[0];
+
+    in = cvLoadImage(argv[2],CV_LOAD_IMAGE_COLOR);
+    
+    if(mode == 1 && argc == 6)
     {
-        for(j=0; j < width; j+=10)
+        message = argv[5];
+
+        if(strlen(message) >= (in->width*in->height))
         {
-            if(k < strlen(msg))
+            puts("Message too long\n");
+            return -1;
+        }
+        else
+        {
+            result = imgStega(in,message,step,limit);
+            if(result == 0)
             {
-                lett = msg[k];
-                data[i*step+j*3] = lett; 
-                k++;
+                puts("Message hidden");
+                cvSaveImage("ImageHidden.bmp",in,0);
             }
-            else if(k == strlen(msg))
+            else
             {
-                lett = '$';
-                data[i*step+j*3] = lett;
-                k++;
+                printf("Error: %d\n",result);
+                return -1;
             }
         }
     }
-
-    //Sembra dare problemi con i formati jpeg a causa della compressione
-    cvSaveImage(argv[2],in);
-    printf("Image %s steganographed correctly to %s\n",argv[1],argv[2]);
+    else if(mode == 2 && argc == 5)
+            printf("Il messaggio trovato e': %s\n",imgDestega(in,step,limit));
+    
     cvReleaseImage(&in);
     return 0;
 }
 
-    
+
 
 
 
