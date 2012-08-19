@@ -7,12 +7,12 @@
 int main(int argc, char **argv)
 {
     IplImage *in;
-    char *img,*message,*simbol,limit;
-    int mode,step,result;
+    char *img,*message;
+    int mode,result;
     
-    if(argc < 5)
+    if(argc <= 2)
     {
-        printf("Usage: %s <mode> <image_in> <step> <simbol> <<message>>\n",argv[0]);
+        printf("Usage: %s <mode> <image_in> <<message>>\n",argv[0]);
         return -1;
     }
 
@@ -24,16 +24,11 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    step = atoi(argv[3]);
-
-    simbol = argv[4];
-    limit = simbol[0];
-
     in = cvLoadImage(argv[2],CV_LOAD_IMAGE_COLOR);
     
-    if(mode == 1 && argc == 6)
+    if(mode == 1 && argc == 4)
     {
-        message = argv[5];
+        message = argv[3];
 
         if(strlen(message) >= (in->width*in->height))
         {
@@ -42,7 +37,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            result = imgStega(in,message,step,limit);
+            result = imgStega(in,message);
             if(result == 0)
             {
                 puts("Message hidden");
@@ -55,8 +50,8 @@ int main(int argc, char **argv)
             }
         }
     }
-    else if(mode == 2 && argc == 5)
-            printf("Il messaggio trovato e': %s\n",imgDestega(in,step,limit));
+    else if(mode == 2 && argc == 3)
+            printf("Il messaggio trovato e': %s\n",imgDestega(in));
     
     cvReleaseImage(&in);
     return 0;
