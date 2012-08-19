@@ -10,16 +10,12 @@ int imgStega(IplImage *img, char *msg)
 
     if(img->nChannels != 3)
         return -1;
-    
-    if(len > 10)
-        return -2;
-
-    if(len == 0)
-        return -4;
 
     for(j=0; j < wid; j+=3)
     {
-        if(k < len)
+        if(j == 0)
+            data[j*3] = '$';
+        else if(k < len)
         {
             lett = msg[k];
             data[j*3] = lett;
@@ -27,7 +23,7 @@ int imgStega(IplImage *img, char *msg)
         }
         else if(k == len)
         {
-            data[j*3] = '~';
+            data[j*3] = '$';
             k++;
         }
         else
@@ -44,16 +40,62 @@ char *imgDestega(IplImage *img)
     
     int j,k=0;
     char find;
-    char *buffer = (char*)malloc(sizeof(char));
-    *buffer = '\0';
+    char *buffer = '\0';
     
     for(j=0; j < wid; j+=3)
     {
         find = data[j*3];
-        
-        if(k >= 10)
-            exit(EXIT_FAILURE);
-         if(find == '~')
+
+        if(j == 0)
+        {
+            if(find != '$')
+                exit(EXIT_FAILURE);
+            else
+                continue;
+        }
+        else
+        {
+            if(find == '$')
+                break;
+            else
+            {
+                buffer=(char*)realloc(buffer,(k+1)*sizeof(char));
+                buffer[k] = find;
+                k++;
+            }
+        }
+    }
+    
+    return buffer;
+}
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*if(find != '$' && j == 0)
+        {
+            printf("NO!NO\n");
+            break;
+        }
+        else if(find == '~')
             return buffer;
         else
         {
@@ -62,9 +104,10 @@ char *imgDestega(IplImage *img)
             buffer = (char*)realloc((void*)buffer,k*sizeof(char));
         }
     }
+    sprintf(buffer,"\n");
     return buffer;
 }
-
+*/
 
 
 
