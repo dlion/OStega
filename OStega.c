@@ -1,11 +1,9 @@
-int imgStega(IplImage *img, char *msg, int step, char controll)
+int imgStega(IplImage *img, char *msg)
 {
     int wid = img->width;
-    int heig = img->height;
-    int imgStep = img->widthStep;
     uchar *data = (uchar*)img->imageData;
     
-    int i,j,k=0; 
+    int j,k=0; 
     int len = strlen(msg);
     char lett;
 
@@ -13,68 +11,57 @@ int imgStega(IplImage *img, char *msg, int step, char controll)
     if(img->nChannels != 3)
         return -1;
     
-    if(len > (wid*heig))
+    if(len > 10)
         return -2;
-    
-    if(step > heig || step > wid)
-        return -3;
-    
+
     if(len == 0)
         return -4;
 
-    for(i=0; i < heig; i+=step)
+    for(j=0; j < wid; j+=3)
     {
-        for(j=0; j < wid; j+=step)
+        if(k < len)
         {
-            if(k < len)
-            {
-                lett = msg[k];
-                data[i*imgStep+j*3] = lett;
-                k++;
-            }
-            else if(k == len)
-            {
-                data[i*imgStep+j*3] = controll;
-                k++;
-            }
-            else
-                break;
+            lett = msg[k];
+            data[j*3] = lett;
+            k++;
         }
+        else if(k == len)
+        {
+            data[j*3] = '~';
+            k++;
+        }
+        else
+            break;
     }
 
     return 0;
 }
     
-char *imgDestega(IplImage *img,int step,char controll)
+char *imgDestega(IplImage *img)
 {
     int wid = img->width;
-    int heig = img->height;
-    int imgStep = img->widthStep;
     uchar *data = (uchar*)img->imageData;
     
-    int i,j,k=0;
+    int j,k=0;
     char find;
     char *buffer = (char*)malloc(sizeof(char));
     *buffer = '\0';
     
-    for(i=0; i < heig; i+=step)
+    for(j=0; j < wid; j+=3)
     {
-        for(j=0; j < wid; j+=step)
+        find = data[j*3];
+        
+        if(k >= 10)
+            exit(EXIT_FAILURE);
+         if(find == '~')
+            return buffer;
+        else
         {
-            find = data[i*imgStep+j*3];
-            
-            if(find == controll)
-                return buffer;
-            else
-            {
-                buffer[k] = find;
-                k++;
-                buffer = (char*)realloc(buffer,k*sizeof(char));
-
-            }
+            buffer[k] = find;
+            k++;
+            buffer = (char*)realloc((void*)buffer,k*sizeof(char));
         }
     }
-    free(buffer);
     return buffer;
 }
 
