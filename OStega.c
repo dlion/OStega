@@ -5,7 +5,6 @@ int imgStega(IplImage *img, char *msg)
     
     int j,k=0; 
     int len = strlen(msg);
-    char lett;
 
 
     if(img->nChannels != 3)
@@ -14,20 +13,23 @@ int imgStega(IplImage *img, char *msg)
     for(j=0; j < wid; j+=3)
     {
         if(j == 0)
-            data[j*3] = '$';
-        else if(k < len)
-        {
-            lett = msg[k];
-            data[j*3] = lett;
-            k++;
-        }
-        else if(k == len)
         {
             data[j*3] = '$';
-            k++;
+            continue;
         }
         else
-            break;
+        { 
+            if(k < len)
+            {
+                data[j*3] = msg[k];
+                k++;
+            }
+            else
+            {
+                data[j*3] = '$';
+                break;
+            }
+        }
     }
 
     return 0;
@@ -40,8 +42,8 @@ char *imgDestega(IplImage *img)
     
     int j,k=0;
     char find;
-    char *buffer = '\0';
-    
+    char *buffer = NULL;
+
     for(j=0; j < wid; j+=3)
     {
         find = data[j*3];
@@ -64,8 +66,7 @@ char *imgDestega(IplImage *img)
                 k++;
             }
         }
-    }
-    
+    } 
     return buffer;
 }
 
