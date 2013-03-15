@@ -1,6 +1,6 @@
 /* Functions to OStega project.
  * thinking and created by Domenico Luciani aka DLion
-  */
+ */
   
 int imgStega(IplImage *img, char *msg)
 {
@@ -9,32 +9,20 @@ int imgStega(IplImage *img, char *msg)
     
     int j,k=0; 
     int len = strlen(msg);
+    char *new_str = (char*)malloc((len+2)*sizeof(char));
 
+    new_str[0] = '$';
+
+    for(j=1; j <= len; j++)
+        new_str[j] = msg[j-1];
+
+    new_str[len+1] = '$';
 
     if(img->nChannels != 3)
         return -1;
 
-    for(j=0; j < wid; j+=3)
-    {
-        if(j == 0)
-        {
-            data[j*3] = '$';
-            continue;
-        }
-        else
-        { 
-            if(k < len)
-            {
-                data[j*3] = msg[k];
-                k++;
-            }
-            else
-            {
-                data[j*3] = '$';
-                break;
-            }
-        }
-    }
+    for(j=0,k=0; j < wid || k < (len+2); j+=3,k++)
+        data[j*3] = new_str[k];
 
     return 0;
 }
