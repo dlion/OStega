@@ -58,6 +58,10 @@ char *imgDestega(IplImage *img)
                 k++;
             }
         }
-    } 
+    }
+    
+    buffer = (char*)realloc(buffer,(k+1)*sizeof(char));
+    buffer[k] = '\0';
+
     return buffer;
 }
