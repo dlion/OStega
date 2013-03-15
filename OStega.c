@@ -1,3 +1,7 @@
+/* Functions to OStega project.
+ * thinking and created by Domenico Luciani aka DLion
+  */
+  
 int imgStega(IplImage *img, char *msg)
 {
     int wid = img->width;
