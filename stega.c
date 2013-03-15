@@ -1,7 +1,7 @@
 #include <highgui.h>
 #include <cv.h>
 #include <string.h>
-#include "OStega.c"
+#include "OStega.h"
 #include <stdlib.h>
 
 int main(int argc, char **argv)
